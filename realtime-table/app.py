@@ -22,3 +22,54 @@ def shutdown_session(exception=None):
 
 if __name__ == '__main__':
     app.run()
+
+
+@app.route('/backend', methods=['POST', 'GET'])
+def backend():
+    if request.method == 'POST':
+        flight = request.form['flight']
+        destination = request.form['destination']
+        check_in = datetime.strptime(request.form['check_in'], '%d-%m-%Y %H:%M %p')
+        departure = datetime.strptime(request.form['departure'], '%d-%m-%Y %H:%M %p')
+        status = request.form['status']
+
+        new_flight = Flight(flight=flight,
+                            destination=destination,
+                            departure=departure,
+                            check_in=check_in,
+                            status=status)
+
+        db_session.add(new_flight)
+        db_session.commit()
+
+        return redirect('/backend', code=302)
+    else:
+        flights = Flight.query.all()
+        return render_template('backend.html', flights=flights)
+
+
+@app.route('/edit/<int:id>', methods=['POST', 'GET'])
+def update_record(id):
+    if request.method == 'POST':
+        flight = request.form['flight']
+        destination = request.form['destination']
+        check_in = datetime.strptime(request.form['check_in'], '%d-%m-%Y %H:%M %p')
+        departure = datetime.strptime(request.form['departure'], '%d-%m-%Y %H:%M %p')
+        status = request.form['status']
+
+        update_flight = Flight.query.get(id)
+        update_flight.flight = flight
+        update_flight.destination = destination
+        update_flight.check_in = check_in
+        update_flight.departure = departure
+        update_flight.status = status
+
+        db_session.commit()
+
+        return redirect('/backend', code=302)
+    else:
+        new_flight = Flight.query.get(id)
+        new_flight.check_in = new_flight.check_in.strftime('%d-%m-%Y %H:%M %p')
+        new_flight.departure = new_flight.departure.strftime('%d-%m-%Y %H:%M %p')
+
+        return render_template('update_flight.html', data=new_flight)
