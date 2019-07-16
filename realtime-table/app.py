@@ -8,6 +8,9 @@ from models import Flight
 
 app = Flask(__name__)
 
+pusher_client = pusher.Pusher(app_id=os.getenv('PUSHER_APP_ID'),
+                              key=os.getenv('PUSHER_KEY'))
+
 
 @app.route('/')
 def index():
