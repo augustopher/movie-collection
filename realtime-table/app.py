@@ -9,7 +9,10 @@ from models import Flight
 app = Flask(__name__)
 
 pusher_client = pusher.Pusher(app_id=os.getenv('PUSHER_APP_ID'),
-                              key=os.getenv('PUSHER_KEY'))
+                              key=os.getenv('PUSHER_KEY'),
+                              secret=os.getenv('PUSHER_SECRET'),
+                              cluster=os.getenv('PUSHER_CLUSTER'),
+                              ssl=True)
 
 
 @app.route('/')
@@ -45,6 +48,15 @@ def backend():
         db_session.add(new_flight)
         db_session.commit()
 
+        data = {'id': new_flight.id,
+                'flight': flight,
+                'destination': destination,
+                'check_in': request.form['check_in'],
+                'departure': request.form['departure'],
+                'status': status}
+
+        pusher_client.trigger(channels='table', event_name='new-record', data={'data': data})
+
         return redirect('/backend', code=302)
     else:
         flights = Flight.query.all()
@@ -68,6 +80,15 @@ def update_record(id):
         update_flight.status = status
 
         db_session.commit()
+
+        data = {'id': id,
+                'flight': flight,
+                'destination': destination,
+                'check_in': request.form['check_in'],
+                'departure': request.form['departure'],
+                'status': status}
+
+        pusher_client.trigger(channels='table', event_name='update-record', data={'data': data})
 
         return redirect('/backend', code=302)
     else:
