@@ -16,7 +16,9 @@ def home():
         movie = Movie(movie_title=request.form.get('title'))
         db.session.add(movie)
         db.session.commit()
-    return render_template('home.html')
+    
+    movie_list = Movie.query.all()
+    return render_template('home.html', movie_list=movie_list)
 
 if __name__ == '__main__':
     app.run(debug=True)

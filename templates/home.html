@@ -1,1 +1,1 @@
-<html>  <body>    <form method="POST" action="/">      <input type="text" name="title">      <input type="submit" value="Add">    </form>  </body></html>
+<html>  <body>    <h1>Add movie</h1>    <form method="POST" action="/">      <input type="text" name="title">      <input type="submit" value="Add">    </form>        <h1>All Movies</h1>    {% for movie in movie_list %}      <p>{{movie.movie_title}}</p>    {% endfor %}  </body></html>
