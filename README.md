@@ -1,2 +1,2 @@
 # movie-collection
-Small pet project to create UI / database for my movie collection
+Simple Flask app to interact with local database of movies.
