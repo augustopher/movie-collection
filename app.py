@@ -27,13 +27,23 @@ def home():
     movie_list = Movie.query.all()
     return render_template('home.html', movie_list=movie_list)
 
-@app.route('/update', methods=['POST']):
+@app.route('/update', methods=['POST'])
 def update():
     old_title = request.form.get('old_title')
     new_title = request.form.get('new_title')
     
     movie = Movie.query.filter_by(movie_title=old_title).first()
     movie.movie_title = new_title
+    db.session.commit()
+    
+    return redirect('/')
+
+@app.route('/delete', methods=['POST'])
+def delete():
+    title = request.form.get('title')
+    movie = Movie.query.filter_by(movie_title=title).first()
+    
+    db.session.delete(movie)
     db.session.commit()
     
     return redirect('/')
